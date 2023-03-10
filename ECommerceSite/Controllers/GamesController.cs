@@ -104,5 +104,17 @@ namespace ECommerceSite.Controllers
             TempData["Message"] = "This game was already deleted!!!";
             return RedirectToAction("Index");
         }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            Game? gameToDetails = await _context.Games.FindAsync(id);
+
+            if(gameToDetails == null)
+            {
+                return NotFound();
+            }
+
+            return View(gameToDetails);
+        }
     }
 }
