@@ -69,5 +69,40 @@ namespace ECommerceSite.Controllers
             }
             return View(gameModel);
         }
+
+        public async Task<IActionResult> Delete(int id)
+        {
+            Game? gameToDelete = await _context.Games.FindAsync(id);
+
+            if(gameToDelete == null)
+            {
+                return NotFound();
+            }
+            return View(gameToDelete);
+        }
+
+        /// <summary>
+        /// In the ActionName, we need to refer it as "Delete"
+        /// because we need a delete to be posted right above the method here.
+        /// Reason is because C# won't allow it to be that way without making changes.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            Game gameToDelete = await _context.Games.FindAsync(id);
+
+            if(gameToDelete != null)
+            {
+                _context.Games.Remove(gameToDelete);
+                await _context.SaveChangesAsync();
+                TempData["Message"] = $"{gameToDelete.Title} was deleted successfully!";
+                return RedirectToAction("Index");
+            }
+
+            TempData["Message"] = "This game was already deleted!!!";
+            return RedirectToAction("Index");
+        }
     }
 }
