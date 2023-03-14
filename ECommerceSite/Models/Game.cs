@@ -24,4 +24,17 @@ namespace ECommerceSite.Models
         [Range(0, 1000)]     
         public double Price { get; set; }
     }
+
+    /// <summary>
+    /// A single video game that has been added to the users
+    /// shopping cart cookie.
+    /// </summary>
+    public class CartGameViewModel
+    {
+        public int GameId { get; set; }
+
+        public string Title { get; set; }
+
+        public double Price { get; set; }
+    }
 }
