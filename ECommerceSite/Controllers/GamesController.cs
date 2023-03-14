@@ -2,6 +2,7 @@
 using ECommerceSite.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
 namespace ECommerceSite.Controllers
 {
@@ -20,6 +21,11 @@ namespace ECommerceSite.Controllers
             // shorter way of the if else statement
             int currPage = id ?? 1; // set current page to id if it has a value, else use a 1
 
+            int totalNumOfProducts = await _context.Games.CountAsync();
+            double maxNumPages = Math.Ceiling((double)totalNumOfProducts / NumGamesToDisplayPerPage);
+            int lastPage = Convert.ToInt32(maxNumPages); // Rounding the pages up to the next whole page
+
+
             /**
             if(id.HasValue)
             {
@@ -35,19 +41,19 @@ namespace ECommerceSite.Controllers
             //List<Game> games = _context.Games.ToList();
 
             // same thing as the one down below but shorter way.
-            List<Game> games = _context.Games
+            List < Game > games = _context.Games
                 .Skip(NumGamesToDisplayPerPage * (currPage - PageOffset))
                 .Take(NumGamesToDisplayPerPage)
                 .ToList();
-            
-            // this is also another way to do
-/*            List<Game> games = await (from game in _context.Games
-                                select game).Skip(NumGamesToDisplayPerPage * (currPage - PageOffset))
-                                            .Take(NumGamesToDisplayPerPage)                 
-                                            .ToListAsync();*/
 
+            // this is also another way to do
+            /*            List<Game> games = await (from game in _context.Games
+                                            select game).Skip(NumGamesToDisplayPerPage * (currPage - PageOffset))
+                                                        .Take(NumGamesToDisplayPerPage)                 
+                                                        .ToListAsync();*/
+            GameCatalogViewModel catalogModel = new(games, lastPage, currPage);
             // Show them on the page
-            return View(games);
+            return View(catalogModel);
         }
 
         [HttpGet]
