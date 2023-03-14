@@ -13,14 +13,38 @@ namespace ECommerceSite.Controllers
             _context = context;
         }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? id)
         {
+            const int NumGamesToDisplayPerPage = 3;
+            const int PageOffset = 1; // Need a page offset to use current page and skip ones you don't need
+            // shorter way of the if else statement
+            int currPage = id ?? 1; // set current page to id if it has a value, else use a 1
+
+            /**
+            if(id.HasValue)
+            {
+                currPage = id.Value;
+            }
+            else
+            {
+                currPage = 1;
+            }
+            **/
+
             // Get all games from the DB
             //List<Game> games = _context.Games.ToList();
+
+            // same thing as the one down below but shorter way.
+            List<Game> games = _context.Games
+                .Skip(NumGamesToDisplayPerPage * (currPage - PageOffset))
+                .Take(NumGamesToDisplayPerPage)
+                .ToList();
             
             // this is also another way to do
-            List<Game> games = await (from game in _context.Games
-                                select game).ToListAsync();
+/*            List<Game> games = await (from game in _context.Games
+                                select game).Skip(NumGamesToDisplayPerPage * (currPage - PageOffset))
+                                            .Take(NumGamesToDisplayPerPage)                 
+                                            .ToListAsync();*/
 
             // Show them on the page
             return View(games);
